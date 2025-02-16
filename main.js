@@ -31,7 +31,7 @@ function verificarNombre(){
     const nombre = document.getElementById("nombre").value
     if(nombre === "") {
         const modal = document.createElement("div")
-        modal.innerHTML = `<div id="alerta" class="modal fade" tabindex="-1" aria-hidden="true">
+        modal.innerHTML = `<div id="alerta" class="modal fade" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                     <div class="modal-body">
