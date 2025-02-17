@@ -72,7 +72,8 @@ function calculoCuotas(montoTotal,cantidadCuotas) {
 function Prestamo(monto,cantidadCuotas){
     this.monto = monto;
     this.cantidadCuotas = cantidadCuotas;
-    this.valorCuotas = calculoCuotas(monto,cantidadCuotas)
+    this.valorCuotas = parseInt(calculoCuotas(monto,cantidadCuotas))
+    
 }
 function cantidadPrestamos(prestamosGenerados){
     if(prestamosGenerados.length==3){
@@ -123,7 +124,7 @@ function crearTarjetas(prestamosGuardados){
                                     <div class="card-body">
                                     <h5 class="card-title">Monto solicitado: ARS$${prestamo.monto}</h5>
                                     <h6 class="card-text">Cantidad de cuotas: ${prestamo.cantidadCuotas}</h6>
-                                    <h6 class="card-text">Valor de cuota: ARS$${prestamo.monto}</h6>
+                                    <h6 class="card-text">Valor de cuota: ARS$${prestamo.valorCuotas}</h6>
                                     </div>
                                 </div>
                             </div>`
