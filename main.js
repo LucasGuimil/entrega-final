@@ -65,12 +65,88 @@ function existeUsuario(){
     }
 }
 
-function iniciar(){
-    existeUsuario()
+function calculoCuotas(montoTotal,cantidadCuotas) {
+        return ((montoTotal+(montoTotal*40/100))/cantidadCuotas)
+    }
+
+function Prestamo(monto,cantidadCuotas){
+    this.monto = monto;
+    this.cantidadCuotas = cantidadCuotas;
+    this.valorCuotas = calculoCuotas(monto,cantidadCuotas)
+}
+function cantidadPrestamos(prestamosGenerados){
+    if(prestamosGenerados.length==3){
+        const botonSimular = document.getElementById("simular")
+        botonSimular.setAttribute("disabled","")
+        const aviso = document.createElement("div")
+        aviso.innerHTML=`<h4 class="text-center">Usted ha llegado al límite de simulaciones. Gracias por usar nuestros servicios.</h4>`
+        document.body.appendChild(aviso)
+    }else{
+    }
+}
+function calculoPrestamo(prestamosSimulados) {
+        const montoSolicitado = parseFloat(document.getElementById("monto").value)
+        const cuotas = parseInt(document.getElementById("cuotas").value)
+        if(isNaN(cuotas) || isNaN(montoSolicitado)|| montoSolicitado<=1000 || montoSolicitado>15000000 ||cuotas<1||cuotas>72){
+        }else{
+        const nuevoPrestamo = new Prestamo(montoSolicitado,cuotas)
+        prestamosSimulados.push(nuevoPrestamo)
+        localStorage.setItem("prestamosSimulados",JSON.stringify(prestamosSimulados))
+        crearTarjetas(prestamosSimulados)}
+        cantidadPrestamos(prestamosSimulados)
+        }
+
+function verificarPrestamosGuardados(){
+        if(localStorage.getItem("prestamosSimulados")!=null){
+            const prestamosGuardados = JSON.parse(localStorage.getItem("prestamosSimulados"))
+            crearTarjetas(prestamosGuardados)
+            cantidadPrestamos(prestamosGuardados)
+            return prestamosGuardados
+        }else{
+            const prestamosNuevos = []
+            return prestamosNuevos
+        }
     }
 
 
+function crearTarjetas(prestamosGuardados){
+    const presentacion = document.getElementById("presentacion")
+    while(presentacion.firstChild){
+        presentacion.removeChild(presentacion.firstChild)
+    }
+    prestamosGuardados.forEach(function(prestamo){
+        const tarjeta = document.createElement("div")
+        presentacion.className="row row-cols-4 g-4 mt-3 justify-content-center"
+        tarjeta.innerHTML = `
+                            <div class="col">
+                                <div class="card text-dark bg-light mb-3">
+                                    <div class="card-body">
+                                    <h5 class="card-title">Monto solicitado: ARS$${prestamo.monto}</h5>
+                                    <h6 class="card-text">Cantidad de cuotas: ${prestamo.cantidadCuotas}</h6>
+                                    <h6 class="card-text">Valor de cuota: ARS$${prestamo.monto}</h6>
+                                    </div>
+                                </div>
+                            </div>`
+        presentacion.appendChild(tarjeta)
+    })
+}
 
 
+function simular(){
+    const botonSimular = document.getElementById("simular")
+    document.getElementById("simulacion").addEventListener("submit",function(event){
+        event.preventDefault()
+    })
+    botonSimular.addEventListener("click", ()=>{
+        calculoPrestamo(verificarPrestamosGuardados())
+    })
+
+}
+
+function iniciar(){
+    existeUsuario()
+    verificarPrestamosGuardados()
+    simular()
+    }
 
 iniciar()
