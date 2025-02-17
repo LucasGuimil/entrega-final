@@ -93,7 +93,9 @@ function calculoPrestamo(prestamosSimulados) {
         const nuevoPrestamo = new Prestamo(montoSolicitado,cuotas)
         prestamosSimulados.push(nuevoPrestamo)
         localStorage.setItem("prestamosSimulados",JSON.stringify(prestamosSimulados))
-        crearTarjetas(prestamosSimulados)}
+        crearTarjetas(prestamosSimulados)
+        document.getElementById("monto").value = ""
+        document.getElementById("cuotas").value = ""}
         cantidadPrestamos(prestamosSimulados)
         }
 
@@ -140,8 +142,6 @@ function simular(){
     })
     botonSimular.addEventListener("click", ()=>{
         calculoPrestamo(verificarPrestamosGuardados())
-        document.getElementById("monto").value = ""
-        document.getElementById("cuotas").value = ""
     })
 
 }
