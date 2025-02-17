@@ -140,6 +140,8 @@ function simular(){
     })
     botonSimular.addEventListener("click", ()=>{
         calculoPrestamo(verificarPrestamosGuardados())
+        document.getElementById("monto").value = ""
+        document.getElementById("cuotas").value = ""
     })
 
 }
