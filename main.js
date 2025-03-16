@@ -4,50 +4,59 @@ function visibilidadDeElemento(elemento,valor){
 
 function bienvenida(nombre) {
     const bienvenido = document.getElementById("bienvenida")
-    bienvenido.textContent = `Bienvenido ${nombre}, a nuestro simulador de préstamos.`
+    bienvenido.innerHTML = `Bienvenido <b>${nombre}</b>, a nuestro simulador de préstamos.`
     visibilidadDeElemento("inicio",true)
     visibilidadDeElemento("simulaciones",false)
 }
 
-function eliminarDatos(modal) {
-    const botonSi = document.getElementById("siBoton")
-    botonSi.addEventListener("click",()=> {
+function eliminarDatos() {
         localStorage.clear()
-        modal.hide()
-        location.reload()
-    })
-}
+        setTimeout(()=>{
+            location.reload()}
+            ,2000)
+    }
 
 function salir(){
     const salir = document.getElementById("salir")
     salir.addEventListener("click",()=>{
-        const alertaSalida = new bootstrap.Modal(document.getElementById("cerrarSesion"))
-        alertaSalida.show()
-        eliminarDatos(alertaSalida)
+        Swal.fire({
+            title: "Cerrar sesión",
+            text: "¿Está seguro que desea salir?\nSe borrará su nombre y todas las simulaciones que haya realizado.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí",
+            cancelButtonText: "No"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Datos eliminados",
+                        text: "Su sesión fue finalizada",
+                        icon: "success",
+                        showConfirmButton: false,
+                        })
+                    eliminarDatos()
+                }
+            });
     })
 }
 
 function verificarNombre(){
     const nombre = document.getElementById("nombre").value
     if(nombre === "") {
-        const modal = document.createElement("div")
-        modal.innerHTML = `<div id="alerta" class="modal fade" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                    <div class="modal-body">
-                                        <p>Ingrese un nombre válido.</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                    </div>
-                                    </div>
-                                </div>
-                                </div>`
-        document.body.appendChild(modal)
-        const alerta = new bootstrap.Modal(document.getElementById("alerta"))
-        alerta.show()
+        Swal.fire("Ingrese un nombre válido","","error")
     }else {
         localStorage.setItem("usuario",nombre)
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            icon: "success",
+            text: "Ingreso correcto"
+        })
         bienvenida(nombre)
     }}
 
@@ -75,10 +84,15 @@ function Prestamo(monto,cantidadCuotas){
     this.valorCuotas = parseInt(calculoCuotas(monto,cantidadCuotas))
     
 }
+function deshabilitar(id){
+    const elementoDeshabilitado = document.getElementById(id)
+    elementoDeshabilitado.setAttribute("disabled","")
+}
 function cantidadPrestamos(prestamosGenerados){
     if(prestamosGenerados.length==3){
-        const botonSimular = document.getElementById("simular")
-        botonSimular.setAttribute("disabled","")
+        deshabilitar("botonSimular")
+        deshabilitar("monto")
+        deshabilitar("cuotas")
         const aviso = document.createElement("div")
         aviso.innerHTML=`<h4 class="text-center">Usted ha llegado al límite de simulaciones. Gracias por usar nuestros servicios.</h4>`
         document.body.appendChild(aviso)
@@ -93,6 +107,13 @@ function calculoPrestamo(prestamosSimulados) {
         const nuevoPrestamo = new Prestamo(montoSolicitado,cuotas)
         prestamosSimulados.push(nuevoPrestamo)
         localStorage.setItem("prestamosSimulados",JSON.stringify(prestamosSimulados))
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "¡Simulación creada con éxito!",
+            showConfirmButton: false,
+            timer: 1200
+            })
         crearTarjetas(prestamosSimulados)
         document.getElementById("monto").value = ""
         document.getElementById("cuotas").value = ""}
@@ -136,7 +157,7 @@ function crearTarjetas(prestamosGuardados){
 
 
 function simular(){
-    const botonSimular = document.getElementById("simular")
+    const botonSimular = document.getElementById("botonSimular")
     document.getElementById("simulacion").addEventListener("submit",function(event){
         event.preventDefault()
     })
