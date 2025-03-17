@@ -166,11 +166,21 @@ function simular(){
     })
 
 }
+function llamadoApi(){
+    fetch('https://dolarapi.com/v1/dolares/oficial')
+        .then(response => response.json())
+        .then(data => {console.log(data)
+        })
+        .catch(error => {console.error, error
+        })
+
+    }
 
 function iniciar(){
     existeUsuario()
     verificarPrestamosGuardados()
     simular()
+    llamadoApi()
     }
 
 iniciar()
