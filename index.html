@@ -17,10 +17,20 @@
     </section>
     <section id="simulaciones" class="container" hidden>
         <h3 id="bienvenida"></h3>
-        <p>Nuestro interés actual es del 40%. Por favor, ingrese los datos solicitados para simular su préstamo. Nuestro límite para préstamos personales es de ARS$ 15.000.000.</p>
+        <p>Nuestro interés actual es del 40% anual. Por favor, ingrese los datos solicitados para simular su préstamo. Nuestro límite para préstamos personales es de $ 15.000.000.</p>
         <p>Usted puede realizar hasta 3 simulaciones.</p>
         <form id="simulacion">
             <div><h2 class="text-center">Calculá tu préstamo</h2></div>
+            <div class="row mb-3">
+                <label class="col-3 col-form-label" for="monto">Moneda a solicitar</label>
+                <div class="col-9">
+                    <select id="seleccion" class="form-select">
+                        <option selected id="ARS" value="ARS">ARS</option>
+                        <option id="USD" value="USD">USD</option>
+                        <option id="EUR" value="EUR">EUR</option>
+                    </select>
+                </div>  
+            </div>
             <div class="row mb-3">
                 <label class="col-3 col-form-label" for="monto">Monto solicitado en ARS$:</label>
                 <div class="col-9">

@@ -73,17 +73,48 @@ function existeUsuario(){
         })
     }
 }
+function calculoInterés(cantidadCuotas){
+    let interes 
+    cantidadCuotas <=12 ? interes = 40*1 : 
+        cantidadCuotas<=24 ? interes = 40*2 : 
+            cantidadCuotas<=36 ? interes = 40*3 : 
+                cantidadCuotas<=48 ? interes = 40*4 : 
+                    cantidadCuotas<=60 ? interes = 40*5 : interes = 40*6
 
+    return interes
+}
 function calculoCuotas(montoTotal,cantidadCuotas) {
-        return ((montoTotal+(montoTotal*40/100))/cantidadCuotas)
+
+        return ((montoTotal+(montoTotal*calculoInterés(cantidadCuotas)/100))/cantidadCuotas)
     }
 
-function Prestamo(monto,cantidadCuotas){
-    this.monto = monto;
+function Prestamo(monto,cantidadCuotas,moneda){
+    this.moneda = moneda.moneda
+    this.valor = moneda.venta
+    this.monto = (monto/moneda.venta);
     this.cantidadCuotas = cantidadCuotas;
     this.valorCuotas = parseInt(calculoCuotas(monto,cantidadCuotas))
     
 }
+
+function seleccionMoneda () {
+    let seleccion = document.getElementById("seleccion").value
+    if (seleccion==="USD"){
+        const dolar = JSON.parse(sessionStorage.getItem("dolar"))
+        console.log(dolar)
+        return dolar
+        }else if(seleccion==="EUR"){
+            const euro = JSON.parse(sessionStorage.getItem("euro"))
+            console.log(euro)
+            return euro
+        }else {
+            const ars = {moneda: "ARS",
+                        venta: 1}
+            console.log(euro)
+            return ars
+        }
+    }
+
 function deshabilitar(id){
     const elementoDeshabilitado = document.getElementById(id)
     elementoDeshabilitado.setAttribute("disabled","")
@@ -102,9 +133,10 @@ function cantidadPrestamos(prestamosGenerados){
 function calculoPrestamo(prestamosSimulados) {
         const montoSolicitado = parseFloat(document.getElementById("monto").value)
         const cuotas = parseInt(document.getElementById("cuotas").value)
+        const monedaPrestamo = seleccionMoneda()
         if(isNaN(cuotas) || isNaN(montoSolicitado)|| montoSolicitado<=1000 || montoSolicitado>15000000 ||cuotas<1||cuotas>72){
         }else{
-        const nuevoPrestamo = new Prestamo(montoSolicitado,cuotas)
+        const nuevoPrestamo = new Prestamo(montoSolicitado,cuotas,monedaPrestamo)
         prestamosSimulados.push(nuevoPrestamo)
         localStorage.setItem("prestamosSimulados",JSON.stringify(prestamosSimulados))
         Swal.fire({
@@ -145,7 +177,7 @@ function crearTarjetas(prestamosGuardados){
                             <div class="col">
                                 <div class="card text-dark bg-light mb-3">
                                     <div class="card-body">
-                                    <h5 class="card-title">Monto solicitado: ARS$${prestamo.monto}</h5>
+                                    <h5 class="card-title">Monto solicitado: ${prestamo.moneda}$${prestamo.monto}</h5>
                                     <h6 class="card-text">Cantidad de cuotas: ${prestamo.cantidadCuotas}</h6>
                                     <h6 class="card-text">Valor de cuota: ARS$${prestamo.valorCuotas}</h6>
                                     </div>
@@ -166,12 +198,12 @@ function simular(){
     })
 
 }
-function llamadoApi(){
-    fetch('https://dolarapi.com/v1/dolares/oficial')
+function llamadoApi(moneda, URL){
+    fetch(URL)
         .then(response => response.json())
-        .then(data => {console.log(data)
+        .then(data => {sessionStorage.setItem(moneda,JSON.stringify(data))
         })
-        .catch(error => {console.error, error
+        .catch(error => {console.error(error)
         })
 
     }
@@ -180,7 +212,8 @@ function iniciar(){
     existeUsuario()
     verificarPrestamosGuardados()
     simular()
-    llamadoApi()
+    llamadoApi("dolar",'https://dolarapi.com/v1/dolares/oficial')
+    llamadoApi("euro",'https://dolarapi.com/v1/cotizaciones/eur')
     }
 
 iniciar()
