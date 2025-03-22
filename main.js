@@ -7,6 +7,7 @@ function bienvenida(nombre) {
     bienvenido.innerHTML = `Bienvenido <b>${nombre}</b>, a nuestro simulador de préstamos.`
     visibilidadDeElemento("inicio",true)
     visibilidadDeElemento("simulaciones",false)
+    mostrarCotizaciones()
 }
 
 function eliminarDatos() {
@@ -90,27 +91,25 @@ function calculoCuotas(montoTotal,cantidadCuotas) {
 
 function Prestamo(monto,cantidadCuotas,moneda){
     this.moneda = moneda.moneda
-    this.valor = moneda.venta
-    this.monto = (monto/moneda.venta);
+    this.valorMoneda = moneda.venta
+    this.monto = (monto/moneda.venta).toFixed(2);
     this.cantidadCuotas = cantidadCuotas;
-    this.valorCuotas = parseInt(calculoCuotas(monto,cantidadCuotas))
+    this.valorCuotas = ((calculoCuotas(monto,cantidadCuotas))/moneda.venta).toFixed(2)
     
 }
-
+function recuperarMoneda(monedaSolicitada) {
+    const moneda = JSON.parse(sessionStorage.getItem(`${monedaSolicitada}`))
+    return moneda
+}
 function seleccionMoneda () {
     let seleccion = document.getElementById("seleccion").value
     if (seleccion==="USD"){
-        const dolar = JSON.parse(sessionStorage.getItem("dolar"))
-        console.log(dolar)
-        return dolar
+        return recuperarMoneda("dolar")
         }else if(seleccion==="EUR"){
-            const euro = JSON.parse(sessionStorage.getItem("euro"))
-            console.log(euro)
-            return euro
+            return recuperarMoneda("euro")
         }else {
             const ars = {moneda: "ARS",
                         venta: 1}
-            console.log(euro)
             return ars
         }
     }
@@ -124,9 +123,8 @@ function cantidadPrestamos(prestamosGenerados){
         deshabilitar("botonSimular")
         deshabilitar("monto")
         deshabilitar("cuotas")
-        const aviso = document.createElement("div")
-        aviso.innerHTML=`<h4 class="text-center">Usted ha llegado al límite de simulaciones. Gracias por usar nuestros servicios.</h4>`
-        document.body.appendChild(aviso)
+        deshabilitar("seleccion")
+        Swal.fire("Usted ha llegado al límite de simulaciones.\nGracias por usar nuestros servicios.","","info")
     }else{
     }
 }
@@ -164,6 +162,17 @@ function verificarPrestamosGuardados(){
         }
     }
 
+function mostrarCotizaciones() {
+    const contenedor = document.getElementById("mostrar-cotizacion")
+    let euro = recuperarMoneda("euro")
+    let dolar = recuperarMoneda("dolar")
+    contenedor.innerHTML = `
+                            <h4>Cotizaciones al día de hoy</h4>
+                            <h5>${euro.moneda}: $${euro.venta}</h5>
+                            <h5>${dolar.moneda}: $${dolar.venta}</h5>
+                            `
+    document.body.appendChild(contenedor)
+}
 
 function crearTarjetas(prestamosGuardados){
     const presentacion = document.getElementById("presentacion")
@@ -179,7 +188,7 @@ function crearTarjetas(prestamosGuardados){
                                     <div class="card-body">
                                     <h5 class="card-title">Monto solicitado: ${prestamo.moneda}$${prestamo.monto}</h5>
                                     <h6 class="card-text">Cantidad de cuotas: ${prestamo.cantidadCuotas}</h6>
-                                    <h6 class="card-text">Valor de cuota: ARS$${prestamo.valorCuotas}</h6>
+                                    <h6 class="card-text">Valor de cuota: ${prestamo.moneda}$${prestamo.valorCuotas}</h6>
                                     </div>
                                 </div>
                             </div>`
