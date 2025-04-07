@@ -212,7 +212,7 @@ function llamadoApi(moneda, URL){
         .then(response => response.json())
         .then(data => {sessionStorage.setItem(moneda,JSON.stringify(data))
         })
-        .catch(error => {console.error(`No ha sido posible recuperar la cotización solicitada. Detalle de error: ${error}`)
+        .catch(error => {console.error(`No ha sido posible recuperar la cotización solicitada. Detalle de error:`, error`)
         })
 
     }
